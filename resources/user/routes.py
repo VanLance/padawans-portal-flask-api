@@ -1,54 +1,43 @@
 from flask import request
+from flask.views import MethodView
 
-from app import app
+
+from . import bp
 from db import users
 
-@app.route('/users')
-def get_users():
-    return {
-        'users' : list(users.values())
-    }
-
-@app.route('/user/<int:id>')
-def get_ind_user(id):
-    if id in users:
-        return {
-            'user' : users[id]
-        }
-    return {
-        'UH OH, something went wrong' : "invalid user id"
-    }
-
-
-@app.route('/user', methods=["POST"])
-def create_user():
-    data = request.get_json()
-    print(data)
-    users[data['id']] = data
-    return {
-        'user created successfully': users[data['id']]
-    }
-
-@app.route('/user', methods=["PUT"])
-def update_user():
-    data = request.get_json()
-    if data['id'] in users:
-        users[data['id']] = data
-        return {
-            'user updated' : users[data['id']]
-        }
-    return {
-        'err' : 'no user found with that id'
-    }
+@bp.route('/user')
+class UserList(MethodView):
     
-@app.route('/user', methods=["DELETE"])
-def del_user():
-    data = request.get_json()
-    if data['id'] in users:
-        del users[data['id']]
+    def get(self):
+        return { 'users' : list(users.values()) }, 200
+    
+    def post(self):
+        data = request.get_json()
+
+        users[data['id']] = data
+        return { 'user created successfully': users[data['id']] }, 201
+
+@bp.route('/user/<int:id>')
+class User(MethodView):
+    
+    def get(self, id):
+        if id in users:
+            return {'user' : users[id] }, 200
         return {
-            'user gone': f"{data['username']} is no more. . . "
-        }
-    return {
-        'err' : "can't delete that user they aren't there. . . "
-    }
+            'UH OH, something went wrong' : "invalid user id"
+        }, 400
+
+    def put(self, id):
+        data = request.get_json()
+        if id in users:
+            users[id] = data
+            return { 'user updated' : users[id] }, 201
+        return {'err' : 'no user found with that id'}, 401
+
+    def delete(self, id):
+        data = request.get_json()
+        if id in users:
+            del users[id]
+            return { 'user gone': f"{data['username']} is no more. . . " }, 202
+        return { 'err' : "can't delete that user they aren't there. . . " } , 400
+
