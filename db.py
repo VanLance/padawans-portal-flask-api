@@ -9,7 +9,8 @@ users = {
     2 : {
         'id' : 2,
         'username' : 'ds',
-        'email' : 'ds@ct.com'
+        'email' : 'ds@ct.com',
+        'password': '123'
     }
 }
 
