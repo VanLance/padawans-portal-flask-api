@@ -23,4 +23,21 @@ class UserModel(db.Model):
         db.session.delete(self)
         db.session.commit()
 
+    def from_dict(self, user_dict):
+        for k , v in user_dict.items():
+            if k != 'password':
+                setattr(self, k, v)
+            else:
+                setattr(self, 'password_hash', generate_password_hash(v))
+
+
+
+
+    # id = fields.Str(dump_only=True)
+    # username = fields.Str(required=True)
+    # email = fields.Str(required=True)
+    # password = fields.Str(required=True, load_only = True)
+    # first_name= fields.Str()
+    # last_name= fields.Str()
+
 
