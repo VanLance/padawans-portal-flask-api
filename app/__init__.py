@@ -13,7 +13,7 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
 from models.user_model import UserModel
-
+from models.post_model import PostModel
 
 from resources.post import bp as post_bp
 app.register_blueprint(post_bp)

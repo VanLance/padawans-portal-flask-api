@@ -3,7 +3,7 @@ from flask.views import MethodView
 from uuid import uuid4
 from flask_smorest import abort
 
-from schemas import UserSchema
+from schemas import UserSchema, UserWithPostsSchema
 from . import bp
 
 from db import users
@@ -12,7 +12,7 @@ from models.user_model import UserModel
 @bp.route('/user')
 class UserList(MethodView):
     
-    @bp.response(200, UserSchema(many=True))
+    @bp.response(200, UserWithPostsSchema(many=True))
     def get(self):
         return UserModel.query.all()
 
@@ -24,18 +24,15 @@ class UserList(MethodView):
             user = UserModel()
             user.from_dict(data)
             user.save_user()
-            return {
-                'message' : f"user {data['username']}"}, 201
+            return user
         except:
-            return {
-                'error' : "username or email already taken, please try a different one!"
-            }, 400
-        
+            abort(400, message="username or email already taken, please try a different one!")
 
+        
 @bp.route('/user/<int:id>')
 class User(MethodView):
     
-    @bp.response(200, UserSchema)
+    @bp.response(200, UserWithPostsSchema)
     def get(self, id):
         user = UserModel.query.get(id)
         if user:
@@ -45,12 +42,13 @@ class User(MethodView):
 
 
     @bp.arguments(UserSchema)
+    @bp.response(200, UserWithPostsSchema)
     def put(self, data, id):
         user = UserModel.query.get(id)
         if user:
             user.from_dict(data)
             user.save_user()
-            return { "message": "user updated"}, 200
+            return user
         else:
             abort(400, message="not a valid user")          
 

@@ -1,5 +1,11 @@
 from marshmallow import Schema, fields
 
+class PostSchema(Schema):
+    id = fields.Str(dump_only=True)
+    title = fields.Str()
+    body = fields.Str(required=True)
+    user_id = fields.Int(required=True)
+
 class UserSchema(Schema):
     id = fields.Str(dump_only=True)
     username = fields.Str(required=True)
@@ -8,8 +14,8 @@ class UserSchema(Schema):
     first_name= fields.Str()
     last_name= fields.Str()
 
-class PostSchema(Schema):
-    id = fields.Str(dump_only=True)
-    title = fields.Str()
-    body = fields.Str(required=True)
-    author = fields.Int(required=True)
+class PostWithUserSchema(PostSchema):
+    author = fields.Nested(UserSchema)
+
+class UserWithPostsSchema(UserSchema):
+    posts = fields.List(fields.Nested(PostSchema), dump_only = True)
