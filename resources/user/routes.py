@@ -1,7 +1,8 @@
-from flask import request
+from flask import request, jsonify
 from flask.views import MethodView
 from uuid import uuid4
 from flask_smorest import abort
+from flask_jwt_extended import create_access_token, unset_jwt_cookies
 
 from schemas import UserSchema, UserWithPostsSchema
 from . import bp
@@ -65,3 +66,21 @@ class User(MethodView):
         #     return { 'user gone': f" is no more. . . " }, 202
         # return { 'err' : "can't delete that user they aren't there. . . " } , 400
 
+
+@bp.post('/login')
+def login():
+    login_data = request.get_json()
+    username = login_data['username']
+
+    user = UserModel.query.filter_by(username = username).first()
+    if user and user.check_password( login_data['password'] ):
+        access_token = create_access_token(identity=user.id)
+        return {'access_token': access_token}, 201
+
+    abort(400, message="Invalid User Data")
+
+@bp.route("/logout", methods=["POST"])
+def logout():
+    response = jsonify({"msg": "logout successful"})
+    unset_jwt_cookies(response)
+    return response
