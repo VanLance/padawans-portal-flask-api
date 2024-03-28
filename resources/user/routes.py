@@ -7,7 +7,6 @@ from flask_jwt_extended import create_access_token, unset_jwt_cookies
 from schemas import UserSchema, UserWithPostsSchema
 from . import bp
 
-from db import users
 from models.user_model import UserModel
 
 @bp.route('/user')
@@ -60,12 +59,6 @@ class User(MethodView):
             user.del_user()
             return { "message": "user GONE GONE GONE"}, 200
         abort(400, message="not a valid user")
-        
-        # if id in users:
-        #     del users[id]
-        #     return { 'user gone': f" is no more. . . " }, 202
-        # return { 'err' : "can't delete that user they aren't there. . . " } , 400
-
 
 @bp.post('/login')
 def login():

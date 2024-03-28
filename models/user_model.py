@@ -12,6 +12,7 @@ class UserModel(db.Model):
     password_hash = db.Column(db.String, nullable = False)
     first_name= db.Column(db.String(75))
     last_name= db.Column(db.String(75))
+    
     posts = db.relationship("PostModel", back_populates="author", lazy='dynamic')
 
     def save_user(self):

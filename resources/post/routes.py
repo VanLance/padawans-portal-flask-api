@@ -1,14 +1,11 @@
-from flask import jsonify
 from flask.views import MethodView
 from flask_smorest import abort
-from uuid import uuid4
+
 from flask_jwt_extended import jwt_required
 
 from . import bp
 from schemas import PostSchema, PostWithUserSchema
 from models.post_model import PostModel
-
-from db import users, posts
 
 @bp.route('/post')
 class PostList(MethodView):

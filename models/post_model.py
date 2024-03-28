@@ -15,7 +15,6 @@ class PostModel(db.Model):
     author = db.relationship("UserModel", back_populates='posts')
 
     def from_dict(self, a_dict):
-
         self.title = a_dict['title']
         setattr(self, 'body', a_dict['body'])
         setattr(self, 'user_id', int(a_dict['user_id'] ))
