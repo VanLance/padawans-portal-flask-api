@@ -29,12 +29,15 @@ class UserList(MethodView):
             abort(400, message="username or email already taken, please try a different one!")
 
         
-@bp.route('/user/<int:id>')
+@bp.route('/user/<id>')
 class User(MethodView):
     
     @bp.response(200, UserWithPostsSchema)
     def get(self, id):
-        user = UserModel.query.get(id)
+        if id.isdigit():
+            user = UserModel.query.get(id)
+        else:
+            user = UserModel.query.filter_by(username = id).first_or_404()
         if user:
             return user
         else:

@@ -1,7 +1,7 @@
 from flask.views import MethodView
 from flask_smorest import abort
 
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from . import bp
 from schemas import PostSchema, PostWithUserSchema
@@ -15,6 +15,8 @@ class PostList(MethodView):
     @bp.arguments(PostSchema)
     def post(self, post_data):
 
+        user_id = get_jwt_identity()
+        post_data = post_data | {'user_id': user_id}
         try:
             post = PostModel()
             post.from_dict(post_data)

@@ -4,7 +4,6 @@ class PostSchema(Schema):
     id = fields.Str(dump_only=True)
     title = fields.Str()
     body = fields.Str(required=True)
-    user_id = fields.Int(required=True)
 
 class UserSchema(Schema):
     id = fields.Str(dump_only=True)
